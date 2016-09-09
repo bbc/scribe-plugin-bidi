@@ -1,0 +1,13 @@
+var Mocha = require('mocha');
+var createRunner = require('scribe-test-harness/create-runner');
+
+var mocha = new Mocha();
+
+/**
+ * Wait for the connection to Sauce Labs to finish.
+ */
+mocha.timeout(15 * 1000);
+mocha.reporter('spec');
+mocha.addFile(__dirname + '/bidi.spec.js');
+
+createRunner(mocha);

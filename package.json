@@ -1,0 +1,28 @@
+{
+  "name": "scribe-bidi-plugin",
+  "version": "1.0.0",
+  "description": "Add bidirectional markup to markup",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "setup": "./scripts/setup.sh",
+    "test": "./scripts/run-tests.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bbc/scribe-bidi-plugin.git"
+  },
+  "bugs": {
+    "url": "https://github.com/bbc/scribe-bidi-plugin/issues"
+  },
+  "homepage": "https://github.com/bbc/scribe-bidi-plugin#readme",
+  "devDependencies": {
+    "chai": "^1.9.2",
+    "http-server": "~0.6.1",
+    "mocha": "~2.1.0",
+    "selenium-webdriver": "~2.41.0",
+    "scribe-test-harness": "^1.0.0"
+  }
+}

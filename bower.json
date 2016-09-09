@@ -1,0 +1,12 @@
+{
+  "name": "scribe-plugin-bidi",
+  "dependencies": {
+  },
+  "devDependencies": {
+    "requirejs": "~2.1.20",
+    "scribe": "3.2.0",
+    "immutable" : "3.8.1",
+    "lodash-amd": "~3.5"
+  },
+  "version": "0.0.1"
+}
