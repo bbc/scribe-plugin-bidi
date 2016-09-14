@@ -23,10 +23,12 @@ define(function () {
 
       function queryState(dir) {
         return function() {
-          var selection = new scribe.api.Selection();
           // active iff there exists span with a dir attribute that matches `dir`
-          var ancestorDirection = selection.getContaining(function (node) { return node.nodeName === 'SPAN' && node.hasAttribute('dir') });
-          return ancestorDirection && (ancestorDirection.getAttribute('dir') === dir);
+          var selection = new scribe.api.Selection();
+          var ancestorDirSpan = selection.getContaining(function (node) {
+            return node.nodeName === 'SPAN' && node.hasAttribute('dir');
+          });
+          return ancestorDirSpan && (ancestorDirSpan.getAttribute('dir') === dir);
         }
       }
 
@@ -38,7 +40,7 @@ define(function () {
         var paragraph = selection.getContaining(function (element) {
           return element.nodeName === 'P' || element.nodeName === 'LI'
         });
-        return !range.collapsed && paragraph;
+        return range && (range.collapsed === false) && paragraph;
       }
 
       var ltrCommand = new scribe.api.SimpleCommand('bidi-ltr', 'BIDI-LTR');

@@ -19,7 +19,7 @@
   },
   "homepage": "https://github.com/bbc/scribe-bidi-plugin#readme",
   "devDependencies": {
-    "chai": "^1.9.2",
+    "chai": "~1.9.1",
     "http-server": "~0.6.1",
     "mocha": "~2.1.0",
     "selenium-webdriver": "~2.41.0",
