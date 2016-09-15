@@ -48,5 +48,5 @@ npm run test
 
 ## License
 
-MIT License.
-Copyright (c) 2016 British Broadcasting Corporation
+MIT License.    
+Copyright © 2016 British Broadcasting Corporation
