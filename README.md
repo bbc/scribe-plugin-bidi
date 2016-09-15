@@ -15,12 +15,13 @@ See also:
 bower install scribe-plugin-bidi
 ```
 
-scribe-plugin-bidi is an **AMD module**:
+scribe-plugin-bidi is an AMD module:
 ```javascript
-require(['scribe', 'scribe-plugin-toolbar'], function (Scribe, scribeBidiPlugin) {
+require(['scribe', 'scribe-plugin-bidi', 'scribe-plugin-bidi-sanitize'], function (Scribe, plugin, sanitize) {
   var scribeElement = document.querySelector('.scribe');
   var scribe = new Scribe(scribeElement);
-  scribe.use(scribeBidiPlugin());
+  scribe.use(plugin());
+  scribe.use(sanitize());
 });
 ```
 
@@ -38,7 +39,6 @@ To **setup the environment**, [`scribe-test-harness`](https://github.com/guardia
   PATH=$PATH:~/Documents/Executables
     ```
 3. Downloading dependencies (including selenium webdriver) via `npm run setup`
-4. A saucelabs account with `SAUCE_USERNAME` and `SAUCE_ACCESS_KEY` env variables set
 
 
 To **run the tests**:
