@@ -45,3 +45,8 @@ To **run the tests**:
 ```
 npm run test
 ```
+
+## License
+
+MIT License.
+Copyright (c) 2016 British Broadcasting Corporation
