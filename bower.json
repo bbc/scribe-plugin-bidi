@@ -8,5 +8,13 @@
     "immutable" : "3.8.1",
     "lodash-amd": "~3.5"
   },
-  "version": "0.0.1"
+  "version": "1.0.0",
+  "ignore": [
+      "test",
+      "scripts",
+      ".bowerrc",
+      ".gitignore",
+      "package.json",
+      "README.md"
+  ]
 }
