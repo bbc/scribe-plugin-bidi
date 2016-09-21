@@ -1,61 +1,78 @@
 define(function () {
+    'use strict';
 
-  'use strict';
-
-  return function () {
-    return function (scribe) {
-
-      function bidiExecute(dir) {
-        var spanElement = document.createElement('span');
-        spanElement.setAttribute('dir', dir);
-
-        var selection = new scribe.api.Selection();
-        var range = selection.range;
-
-        var selectedHtmlDocumentFragment = range.extractContents();
-        spanElement.appendChild(selectedHtmlDocumentFragment);
-        range.insertNode(spanElement);
-        range.selectNode(spanElement);
-
-        selection.selection.removeAllRanges();
-        selection.selection.addRange(range);
-      }
-
-      function queryState(dir) {
-        return function() {
-          // active iff there exists span with a dir attribute that matches `dir`
-          var selection = new scribe.api.Selection();
-          var ancestorDirSpan = selection.getContaining(function (node) {
-            return node.nodeName === 'SPAN' && node.hasAttribute('dir');
-          });
-          return ancestorDirSpan && (ancestorDirSpan.getAttribute('dir') === dir);
+    function deleteSpans(elem, scribe) {
+        // Traverse the tree
+        function traverse(root) {
+            if (!root) return;
+            if (root.nodeName === 'SPAN') {
+                var parent = root.parentNode;
+                scribe.element.unwrap(parent, root);
+                traverse(parent);
+                return;
+            }
+            for (var i = 0; i < root.children.length; i++) {
+                var child = root.children[i];
+                traverse(child);
+            }
         }
-      }
+        return traverse(elem);
+    }
 
-      function queryEnabled() {
-        var selection = new scribe.api.Selection();
-        var range = selection.range;
+    return function () {
+        return function (scribe) {
 
-        // disable bidi if the selection intersects more than one paragraph
-        var paragraph = selection.getContaining(function (element) {
-          return element.nodeName === 'P' || element.nodeName === 'LI'
-        });
-        return range && (range.collapsed === false) && paragraph;
-      }
+            var ltrCommand = new scribe.api.SimpleCommand('bidi-ltr', 'BIDI-LTR');
+            scribe.commands['bidi-ltr'] = ltrCommand;
 
-      var ltrCommand = new scribe.api.SimpleCommand('bidi-ltr', 'BIDI-LTR');
-      var rtlCommand = new scribe.api.SimpleCommand('bidi-rtl', 'BIDI-RTL');
-      ltrCommand.execute = function () { scribe.transactionManager.run(bidiExecute('ltr')); };
-      rtlCommand.execute = function () { scribe.transactionManager.run(bidiExecute('rtl')); };
+            ltrCommand.execute = function () {
+                scribe.transactionManager.run(function() {
+                    var selection = new scribe.api.Selection();
+                    var range = selection.range;
+                    var selectedHtmlDocumentFragment = range.cloneContents();
 
-      ltrCommand.queryState = queryState('ltr');
-      rtlCommand.queryState = queryState('rtl');
+                    var ancestorSpan = selection.getContaining(function (node) { return node.nodeName === 'SPAN'; });
+                    if(ancestorSpan) { //is my ancestor a span?
+                        var parent = ancestorSpan.parentNode;
+                        scribe.element.unwrap(parent, ancestorSpan);
+                    } else {
+                        var spanElement = document.createElement('span');
+                        selectedHtmlDocumentFragment = range.extractContents();
+                        deleteSpans(selectedHtmlDocumentFragment, scribe);
+                        spanElement.appendChild(selectedHtmlDocumentFragment);
+                        spanElement.setAttribute('dir', 'ltr');
+                        spanElement.setAttribute('lang', 'en-gb');
+                        range.insertNode(spanElement);
+                        range.selectNode(spanElement);
+                        selection.selection.removeAllRanges();
+                        selection.selection.addRange(range);
+                    }
+                });
+            };
+            ltrCommand.queryState = function() {
+                return function() {
+                    // active iff there exists span with a dir attribute that matches `dir`
+                    var selection = new scribe.api.Selection();
+                    var ancestorDirSpan = selection.getContaining(function (node) {
+                        return node.nodeName === 'SPAN' && node.hasAttribute('dir');
+                    });
+                    return ancestorDirSpan && (ancestorDirSpan.getAttribute('dir') === dir);
+                }
+            };
+            ltrCommand.queryEnabled = function() {
+                var selection = new scribe.api.Selection();
+                var range = selection.range;
+                // disable bidi if the selection intersects more than one paragraph
+                var paragraph = selection.getContaining(function (element) {
+                    return element.nodeName === 'P' || element.nodeName === 'LI'
+                });
+                var ancestorSpan = selection.getContaining(function (node) {
+                    return node.nodeName === 'SPAN';
+                });
+                var disabled = range && (range.collapsed && !ancestorSpan) || !paragraph;
+                return !disabled;
+            };
 
-      ltrCommand.queryEnabled = queryEnabled;
-      rtlCommand.queryEnabled = queryEnabled;
-
-      scribe.commands['bidi-ltr'] = ltrCommand;
-      scribe.commands['bidi-rtl'] = rtlCommand;
+        };
     };
-  };
 });

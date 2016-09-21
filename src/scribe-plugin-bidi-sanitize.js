@@ -7,23 +7,19 @@ define(function () {
       // Traverse the tree
       function traverse(root) {
 
-        // remove empty spans
         if (!root) return;
 
-        if (root.nodeName === 'SPAN' && (root.getAttribute('dir') === 'ltr' || root.getAttribute('dir') === 'rtl')) {
-          var empty = scribe.element.isEmptyInlineElement(root);
-          // detect when a new paragraphs has just been added,
-          // html is equivalent to: "<p><em class="scribe-marker"><br></p>"
-          // remove span[dir] from this newly added paragraph
-          var newEmptyLine = root.firstChild && root.lastChild
-            && scribe.element.isSelectionMarkerNode(root.firstChild) && root.lastChild.nodeName === 'BR';
+        var isSpan = root.nodeName === 'SPAN';
+        var hasNextSpan = root.nextSibling !== null && root.nextSibling.nodeName === 'SPAN';
 
-          if (empty || newEmptyLine) {
-            var parent = root.parentNode;
-            scribe.element.removeNode(root);
-            traverse(parent);
-            return;
-          }
+        if (isSpan && hasNextSpan) {
+            var current = root;
+            var next = current.nextSibling;
+
+            while (next.childNodes.length > 0) {
+                current.appendChild(next.childNodes[0]);
+            }
+            next.parentNode.removeChild(next);
         }
 
         for (var i = 0; i < root.children.length; i++) {
@@ -32,14 +28,13 @@ define(function () {
         }
       }
 
-      scribe.registerHTMLFormatter('sanitize', function (html) {
-        var bin = document.createElement('div');
-        bin.innerHTML = html;
-        traverse(bin);
-        return bin.innerHTML;
-      });
+       scribe.registerHTMLFormatter('sanitize', function (html) {
+         var bin = document.createElement('div');
+         bin.innerHTML = html;
+         traverse(bin);
+         return bin.innerHTML;
+       });
     };
   };
 
-})
-;
+});
