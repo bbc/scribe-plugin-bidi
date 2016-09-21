@@ -20,6 +20,8 @@ define(function () {
                 current.appendChild(next.childNodes[0]);
             }
             next.parentNode.removeChild(next);
+            traverse(root);
+            return;
         }
 
         for (var i = 0; i < root.children.length; i++) {

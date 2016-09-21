@@ -32,7 +32,7 @@ define(function () {
                     var selectedHtmlDocumentFragment = range.cloneContents();
 
                     var ancestorSpan = selection.getContaining(function (node) { return node.nodeName === 'SPAN'; });
-                    if(ancestorSpan) { //is my ancestor a span?
+                    if(ancestorSpan) {
                         var parent = ancestorSpan.parentNode;
                         scribe.element.unwrap(parent, ancestorSpan);
                     } else {
@@ -50,13 +50,16 @@ define(function () {
                 });
             };
             ltrCommand.queryState = function() {
-                return function() {
-                    // active iff there exists span with a dir attribute that matches `dir`
-                    var selection = new scribe.api.Selection();
-                    var ancestorDirSpan = selection.getContaining(function (node) {
-                        return node.nodeName === 'SPAN' && node.hasAttribute('dir');
-                    });
-                    return ancestorDirSpan && (ancestorDirSpan.getAttribute('dir') === dir);
+                // active if and only if there is an ancestor span
+                // with a dir attribute that matches `dir` and a lang of 'en-gb'
+                var selection = new scribe.api.Selection();
+                var ancestorDirSpan = selection.getContaining(function (node) {
+                    return node.nodeName === 'SPAN' && node.hasAttribute('dir');
+                });
+                if (ancestorDirSpan === null || ancestorDirSpan === undefined) {
+                    return false;
+                } else {
+                    return ancestorDirSpan.getAttribute('dir') === 'ltr';
                 }
             };
             ltrCommand.queryEnabled = function() {
