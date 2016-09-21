@@ -3,7 +3,7 @@
 A scribe plugin for adding [bidirectional markup](https://www.w3.org/International/articles/inline-bidi-markup/#quick).
 Allows users to tightly wrap [opposite-direction phrases](https://www.w3.org/International/articles/inline-bidi-markup/#oppositedirection) to correct the Unicode Bidirectional Algorithm when it goes wrong.
 
-Adds two scribe commands: `ltr-bidi` and `rtr-bidi` which surround a text selection with `<span dir="ltr"></span>` and `<span dir="rtl"></span>` respectively.
+Adds scribe commands `ltr-bidi` which surround a text selection with `<span dir="ltr"></span>`.
 
 See also:
 - [Unicode Bidirectional Algorithm Basics](https://www.w3.org/International/articles/inline-bidi-markup/uba-basics)
